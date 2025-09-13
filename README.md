@@ -42,14 +42,6 @@ Daily consolidated snapshots are created after the 18:00 UTC run.
 ### Data Format:
 Each JSON file contains an array of unique wallet addresses that met all filtering criteria during the specified time period.
 
-## 🎯 Use Cases
-
-This data is suitable for:
-- Identifying active retail traders on Solana
-- Analyzing meme coin trading patterns
-- Building targeted wallet lists for analysis
-- Excluding bot activity from trading analysis
-
 ## 📝 Notes
 
 - Only includes public on-chain data
