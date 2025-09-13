@@ -26,10 +26,10 @@ Active wallets are Solana addresses that have conducted transactions within the 
 ## 🔄 Update Schedule
 
 Data is updated every 6 hours at the following UTC times:
-- **00:00 UTC** (4PM PST previous day)
-- **06:00 UTC** (10PM PST previous day)
-- **12:00 UTC** (4AM PST)
-- **18:00 UTC** (10AM PST)
+- **00:00 UTC**
+- **06:00 UTC**
+- **12:00 UTC**
+- **18:00 UTC**
 
 Daily consolidated snapshots are created after the 18:00 UTC run.
 
