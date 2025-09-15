@@ -63,12 +63,21 @@ Daily consolidation happens after run-18 completes (~18:00 UTC).
 
 ## Wallet Criteria
 
-Addresses in this repository represent wallets that:
-- Trade meme coins (non-SOL, non-stablecoin tokens)
-- Have trading volume between $500-$50,000
-- Execute fewer than 100 trades (bot filter)
-- Maintain >5 SOL balance
-- Haven't appeared frequently in historical data
+Addresses in this repository represent wallets that meet ALL of the following criteria:
+
+### Trading Activity Filters
+- **Trade meme coins** (non-SOL, non-stablecoin tokens)
+- **Trading volume:** $500 - $50,000 (within time window)
+- **Trade count:** < 100 trades (bot filter)
+- **Average trade size:** Minimum $50 (filters out micro-traders)
+
+### Quality Filters
+- **Minimum trades:** At least 1 trade
+- **Token diversity:** 1-20 unique tokens (avoids single-token focus and bot scatter)
+- **Transaction diversity:** At least 1 distinct transaction
+
+### Frequency Filter
+- **Historical appearances:** Haven't appeared ≥3 times in recent history (daily + weekly archives)
 
 ## Usage
 
