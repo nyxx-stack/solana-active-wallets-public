@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-09-22T02:12:04.977520+00:00",
+  "wallet_count": 2235,
+  "generation_params": {
+    "time_window_hours": 5,
+    "volume_min_usd": 500.0,
+    "volume_max_usd": 50000.0,
+    "bot_max_trades": 100,
+    "min_sol_balance": 0.1,
+    "query_start": "2025-09-21T21:03:06.606843+00:00",
+    "query_end": "2025-09-22T02:03:06.606843+00:00"
+  },
+  "data_source": "Bitquery",
+  "generated_by": "solana-active-addresses Cloud Function"
+}
