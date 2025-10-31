@@ -1,0 +1,16 @@
+# SQLite database
+app.db
+app.db-journal
+app.db-wal
+app.db-shm
+
+# Session secrets
+.session_secret
+
+# Coolify files
+coolify/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.class
