@@ -14,3 +14,4 @@ coolify/
 __pycache__/
 *.py[cod]
 *.class
+exclusion_list.txt
