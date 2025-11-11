@@ -1,130 +1,97 @@
 # Solana Active Wallets Public
 
-This repository contains curated lists of active Solana wallet addresses that trade meme coins. Updated every 6 hours via automated system.
+## Overview
+This repository provides curated lists of Solana wallet addresses engaged in meme coin trading. The data updates automatically every 6 hours.
 
 ## Repository Structure
 
+The repository organizes data into three main directories:
+
+- **latest/**: Contains current trading data with rolling 24-48 hour windows, divided into six-hour increments (run-00, run-06, run-12, run-18)
+- **history/**: Maintains daily snapshots from the past 14 days with frequency filtering applied
+- **weekly-archives/**: Archives older data using ISO week format (YYYY-Www pattern)
+
+## Data Access
+
+**For Real-Time Analysis**: Access `latest/YYYY-MM-DD/*.json` files updated at 00:00, 06:00, 12:00, and 18:00 UTC.
+
+**For Batch Processing**: Use `history/YYYY-MM-DD.json` files created after the 18:00 UTC run completes, containing only "fresh" wallet addresses.
+
+## Frequency Filtering Mechanism
+
+The system implements cumulative frequency filtering across recent daily files (14 days) and all historical weekly archives. Wallets appearing 3+ times cumulatively are filtered out.
+
+Example: "2 times in daily + 1 time in weekly = 3 total → FILTERED"
+
+## Wallet Selection Criteria
+
+**Trading Requirements**:
+- Trade non-SOL, non-stablecoin meme coins
+- Volume between $100-$50,000 per time window
+- Fewer than 100 trades (bot detection)
+- Average trade size between $50-$2,500
+
+**Quality Standards**:
+- Minimum 1 trade and 1 distinct transaction
+- Minimum 1 unique token traded
+
+## Usage Examples
+
+**Python**: Use `requests` library to fetch from raw GitHub URLs for both historical and real-time data.
+
+```python
+import requests
+
+# Fetch latest run
+url = "https://raw.githubusercontent.com/nyxx-stack/solana-active-wallets-public/main/latest/YYYY-MM-DD/run-00.json"
+response = requests.get(url)
+wallets = response.json()
 ```
-solana-active-wallets-public/
-├── latest/                          # Always current (rolling 24-48h window)
-│   ├── YYYY-MM-DD/                  # Today's data
-│   │   ├── run-00.json              # 00:00-06:00 UTC slot
-│   │   ├── run-06.json              # 06:00-12:00 UTC slot
-│   │   ├── run-12.json              # 12:00-18:00 UTC slot
-│   │   └── run-18.json              # 18:00-00:00 UTC slot
-│   └── last_updated.json            # Update metadata
-├── history/                         # Daily snapshots (last 14 days)
-│   └── YYYY-MM-DD.json              # Frequency-filtered daily addresses
-└── weekly-archives/                 # Weekly consolidated archives
-    └── YYYY-Www.json                # ISO week format (e.g., 2024-W52.json)
+
+**Command Line**: Download files via `curl` with dynamic date formatting.
+
+```bash
+# Fetch today's 00:00 UTC run
+curl -O "https://raw.githubusercontent.com/nyxx-stack/solana-active-wallets-public/main/latest/$(date -u +%Y-%m-%d)/run-00.json"
 ```
 
-## Data Files
+## Data Format
 
-### For Real-Time Analysis
-- **`latest/YYYY-MM-DD/*.json`** - Current day's addresses from each 6-hour run
-- Updated every 6 hours at 00:00, 06:00, 12:00, 18:00 UTC
+Each JSON file contains an array of wallet objects with the following structure:
 
-### For Daily Batch Analysis
-- **`history/YYYY-MM-DD.json`** - Consolidated daily snapshots with frequency filtering
-- Created after 18:00 UTC run completes
-- Contains only "fresh" wallet addresses (not seen frequently before)
+```json
+[
+  {
+    "address": "wallet_address_in_base58",
+    "usd_volume": 1234.56,
+    "trade_count": 15,
+    "unique_tokens": 3,
+    "distinct_transactions": 12,
+    "avg_trade_usd": 82.30
+  }
+]
+```
 
-### Weekly Archives
-- **`weekly-archives/YYYY-Www.json`** - Historical data consolidated by week
-- Daily files older than 14 days are archived here
-- Used for enhanced frequency filtering
+## Additional Information
 
-## Frequency Filtering
-
-The system uses **cumulative frequency filtering** to ensure only fresh wallets appear in daily batches:
-
-1. **Counts appearances across:**
-   - Recent daily files (last 14 days)
-   - All weekly archives (historical data)
-
-2. **Filter threshold:** Addresses appearing 3+ times total (cumulative) are excluded
-
-3. **Examples:**
-   - 2 times in daily + 1 time in weekly = 3 total → FILTERED
-   - 1 time in daily + 2 times in weekly = 3 total → FILTERED
-   - 2 times in daily + 0 times in weekly = 2 total → KEPT
+- Data sourced from blockchain analytics APIs
+- All timestamps in UTC
+- Addresses in base58 format (Solana public keys)
+- Historical data fully preserved in weekly archives
+- Known bot and spam addresses are excluded from all datasets
 
 ## Update Schedule
 
-| Run Slot | UTC Time | PST/PDT Time | Description |
-|----------|----------|--------------|-------------|
-| run-00 | 00:00-06:00 | 16:00-22:00 (prev day) | Evening activity |
-| run-06 | 06:00-12:00 | 22:00-04:00 | Night activity |
-| run-12 | 12:00-18:00 | 04:00-10:00 | Morning activity |
-| run-18 | 18:00-00:00 | 10:00-16:00 | Day activity |
+Data refreshes occur at:
+- 00:00 UTC
+- 06:00 UTC
+- 12:00 UTC
+- 18:00 UTC
 
-Daily consolidation happens after run-18 completes (~18:00 UTC).
-
-## Wallet Criteria
-
-Addresses in this repository represent wallets that meet ALL of the following criteria:
-
-### Trading Activity Filters
-- **Trade meme coins** (non-SOL, non-stablecoin tokens)
-- **Trading volume:** $500 - $50,000 (within time window)
-- **Trade count:** < 100 trades (bot filter)
-- **Average trade size:** Minimum $50 (filters out micro-traders)
-
-### Quality Filters
-- **Minimum trades:** At least 1 trade
-- **Token diversity:** 1-20 unique tokens (avoids single-token focus and bot scatter)
-- **Transaction diversity:** At least 1 distinct transaction
-
-### Frequency Filter
-- **Historical appearances:** Haven't appeared ≥3 times in recent history (daily + weekly archives)
-
-## Usage
-
-### Python
-```python
-import json
-import requests
-
-# Get today's fresh wallets (for batch analysis)
-response = requests.get(
-    "https://raw.githubusercontent.com/nyxx-stack/solana-active-wallets-public/main/history/2025-01-15.json"
-)
-addresses = response.json()
-
-# Get latest addresses (real-time)
-response = requests.get(
-    "https://raw.githubusercontent.com/nyxx-stack/solana-active-wallets-public/main/latest/2025-01-15/run-18.json"
-)
-latest = response.json()
-```
-
-### Direct Download
-```bash
-# Today's consolidated addresses
-curl -O https://raw.githubusercontent.com/nyxx-stack/solana-active-wallets-public/main/history/$(date +%Y-%m-%d).json
-
-# Latest run
-curl -O https://raw.githubusercontent.com/nyxx-stack/solana-active-wallets-public/main/latest/$(date +%Y-%m-%d)/run-18.json
-```
-
-## Data Retention
-
-- **Daily files:** Last 14 days kept as individual files
-- **Weekly archives:** Older data consolidated by ISO week (YYYY-Www format)
-- **No data loss:** All historical addresses preserved in weekly archives
+Daily history snapshots are created after the 18:00 UTC run completes.
 
 ## Notes
 
-- All timestamps are in UTC
-- Addresses are Solana wallet public keys (base58 format)
-- Data sourced from Bitquery APIs
-- Automated updates via Google Cloud Functions
-
-## License
-
-This data is provided as-is for research and analysis purposes.
-
----
-
-*Automated updates every 6 hours via [sol-wallet-query](https://github.com/nyxx-stack/sol-wallet-query)*
+- This is a data-only repository; the processing system is maintained separately
+- Frequency filtering helps identify genuinely active traders rather than automated bots
+- Volume and quality thresholds are tuned to capture organic meme coin trading activity
